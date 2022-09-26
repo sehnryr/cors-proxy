@@ -24,17 +24,13 @@ available_methods = [
     supports_credentials=True,
 )
 def proxy(url):
-    print(flask.request.cookies)
     session = requests.Session()
-    parameters = {
-        **flask.request.args.to_dict(),
-        **flask.request.form.to_dict(),
-    }
     response = session.request(
         method=flask.request.method,
         url=url,
         stream=True,
-        data=parameters,
+        params=flask.request.args.to_dict(),
+        data=flask.request.form.to_dict(),
         cookies=flask.request.cookies,
     )
     custom_response = flask.Response(
