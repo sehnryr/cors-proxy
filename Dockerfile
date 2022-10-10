@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 EXPOSE 8080
-CMD [ "gunicorn", "-b", "0.0.0.0:8080", "server:app" ]
+CMD [ "gunicorn", "--forwarded-allow-ips", "*", "-b", "0.0.0.0:8080", "server:app" ]
