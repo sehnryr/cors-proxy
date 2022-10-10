@@ -17,6 +17,46 @@ available_methods = [
     "OPTIONS",
 ]
 
+# https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
+# https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_response_header_name
+forbidden_headers = [
+    "accept-charset",
+    "accept-encoding",
+    "access-control-request-headers",
+    "access-control-request-method",
+    "connection",
+    "content-length",
+    "cookie",
+    "cookie2",
+    "date",
+    "dnt",
+    "expect",
+    "feature-policy",
+    "host",
+    "keep-alive",
+    "origin",
+    "set-cookie",
+    "referer",
+    "te",
+    "trailer",
+    "transfer-encoding",
+    "upgrade",
+    "via",
+]
+
+
+def filter_headers(headers):
+    """
+    Filters the headers to remove forbidden headers
+    """
+    return {
+        k.lower(): v
+        for k, v in headers.items()
+        if k.lower() not in forbidden_headers
+        and not k.lower().startswith("proxy-")
+        and not k.lower().startswith("sec-")
+    }
+
 
 @app.route("/<path:url>", methods=available_methods)
 @flask_cors.cross_origin(
@@ -33,11 +73,15 @@ def proxy(url):
         data=flask.request.form.to_dict(),
         cookies=flask.request.cookies,
     )
+
+    headers = filter_headers(response.headers)
+
     custom_response = flask.Response(
         flask.stream_with_context(response.iter_content()),
         content_type=response.headers["content-type"]
         if "content-type" in response.headers.keys()
         else None,
+        headers=headers,
         status=response.status_code,
     )
     for cookie in session.cookies:
