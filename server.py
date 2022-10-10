@@ -75,6 +75,7 @@ def proxy(url):
     )
 
     headers = filter_headers(response.headers)
+    headers.pop("content-type", None)
 
     custom_response = flask.Response(
         flask.stream_with_context(response.iter_content()),
