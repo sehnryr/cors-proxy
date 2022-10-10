@@ -72,6 +72,7 @@ def proxy(url):
         params=flask.request.args.to_dict(),
         data=flask.request.form.to_dict(),
         cookies=flask.request.cookies,
+        allow_redirects=False,
     )
 
     headers = filter_headers(response.headers)
