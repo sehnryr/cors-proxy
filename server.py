@@ -75,6 +75,9 @@ def proxy(url):
     )
 
     headers = filter_headers(response.headers)
+    # Add proxy url to the location header if exists
+    if "location" in headers.keys():
+        headers["location"] = flask.request.host_url + headers["location"]
 
     # Remove the content-length header if exists as it is buggy when set
     headers.pop("content-encoding", None)
