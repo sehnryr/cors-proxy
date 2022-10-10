@@ -75,6 +75,9 @@ def proxy(url):
     )
 
     headers = filter_headers(response.headers)
+
+    # Remove the content-length header if exists as it is buggy when set
+    headers.pop("content-encoding", None)
     headers.pop("content-type", None)
 
     custom_response = flask.Response(
